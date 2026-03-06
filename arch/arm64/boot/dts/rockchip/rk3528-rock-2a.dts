@@ -89,8 +89,8 @@
 		regulator-name = "vcc_ddr";
 		regulator-always-on;
 		regulator-boot-on;
-		regulator-min-microvolt = <1100000>;
-		regulator-max-microvolt = <1100000>;
+		regulator-min-microvolt = <1200000>;
+		regulator-max-microvolt = <1200000>;
 		vin-supply = <&vcc5v0_sys>;
 	};
 
@@ -117,6 +117,8 @@
 	vcc_wifi: regulator-3v3-vcc-wifi {
 		compatible = "regulator-fixed";
 		enable-active-high;
+		regulator-boot-on;
+		regulator-always-on;
 		gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&usb_wifi_pwr>;
@@ -138,6 +140,8 @@
 	vcc5v0_usb20: regulator-5v0-vcc-usb20 {
 		compatible = "regulator-fixed";
 		enable-active-high;
+		regulator-boot-on;
+		regulator-always-on;
 		gpios = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&usb_host_en>;
@@ -168,7 +172,9 @@
 		regulator-boot-on;
 		regulator-min-microvolt = <746000>;
 		regulator-max-microvolt = <1201000>;
+		regulator-init-microvolt = <953000>;
 		regulator-settling-time-up-us = <250>;
+		status = "okay";
 	};
 
 	vdd_logic: regulator-vdd-logic {
@@ -180,7 +186,9 @@
 		regulator-boot-on;
 		regulator-min-microvolt = <705000>;
 		regulator-max-microvolt = <1006000>;
+		regulator-init-microvolt = <900000>;
 		regulator-settling-time-up-us = <250>;
+		status = "okay";
 	};
 
 	rfkill {
@@ -202,6 +210,12 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
 		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>;
+	snps,reset-gpio = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
+	snps,reset-active-low;
+	/* Reset time is 20ms, 100ms for rtl8211f */
+	snps,reset-delays-us = <0 20000 100000>;
+	tx_delay = <0x30>;
+	/* rx_delay = <0x3f>; */
 	status = "okay";
 };
 
@@ -401,6 +415,20 @@
 
 &usb2phy_host {
 	phy-supply = <&vcc5v0_usb20>;
+	status = "okay";
+};
+
+&usb_host0_ohci {
+	status = "okay";
+};
+
+&usbdrd30 {
+	status = "okay";
+};
+
+&usbdrd_dwc3 {
+	dr_mode = "host";
+	extcon = <&usb2phy>;
 	status = "okay";
 };
 
