@@ -1,8 +1,8 @@
-<b>linux-radxa</b>
+**linux-radxa**
 
 Kernel 6.19.6 for testing purpose of rockchip Radxa rock-2a and nanopi zero2 projects
 
-<p>Steps:
+<ins>Steps:</ins>
 
 git clone https://github.com/armbian/build
 cp rockchip64_common.inc.new build/config/sources/families/include/rockchip64_common.inc
@@ -10,10 +10,11 @@ cp rock-2a.conf.new build/config/boards/rock-2a.conf
 cd build
 ./compile.sh build BOARD=rock-2a BRANCH=edge BUILD_DESKTOP=no BUILD_MINIMAL=no KERNEL_CONFIGURE=no RELEASE=noble
 
-<p><u>Config files:</u>
+<ins>Config files:</ins>
 
-<b>rock-2a.conf.new</b>
-<quote>
+**rock-2a.conf.new**
+
+<sup>
 # Rockchip RK3528 quad core 1-4GB SoC 1xGBe 0-32GB eMMC
 BOARD_NAME="ROCK 2A"
 BOARD_VENDOR="radxa"
@@ -58,11 +59,11 @@ function post_family_config__rock2a_use_mainline_uboot() {
                 flashcp -v -p "$1/u-boot-rockchip-spi.bin" /dev/mtd0
         }
 }
-</quote>
+</sup>
 
-<p><b>rockchip64_common.inc.new</b>
+**rockchip64_common.inc.new**
 
-<quote>
+<sup>
 ...
         edge)
                 declare -g KERNEL_MAJOR_MINOR="6.19"
@@ -74,13 +75,14 @@ function post_family_config__rock2a_use_mainline_uboot() {
                 declare -g SERIALCON="ttyS0"
                 ;;
 ...
-</quote>
+</sup>
 
 
-<p>Eventaully new patches to apply (from directory called patches):
+<p>Eventually new patches to apply (from directory called patches):
 
+<sup>
 mkdir -p build/userpatches/kernel/archive/rockchip64-6.19/
 mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
 cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
 cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
-
+</sup>
