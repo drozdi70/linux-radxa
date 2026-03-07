@@ -63,24 +63,20 @@ function post_family_config__rock2a_use_mainline_uboot() {
 
 **rockchip64_common.inc.new**
 
-<q>
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-</q>
+>        edge)
+>                declare -g KERNEL_MAJOR_MINOR="6.19"
+>                declare -g LINUXFAMILY=rockchip64
+>                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
+>                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
+>                declare -g KERNELBRANCH='branch:main'
+>                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
+>                declare -g SERIALCON="ttyS0"
+>                ;;
 
 
 <p>Eventually new patches to apply (from directory called patches):
 
-<q>
-mkdir -p build/userpatches/kernel/archive/rockchip64-6.19/
-mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
-cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
-cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
-</q>
+>mkdir -p build/userpatches/kernel/archive/rockchip64-6.19/
+>mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
+>cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
+>cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
