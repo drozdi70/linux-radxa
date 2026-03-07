@@ -14,7 +14,7 @@ cd build
 
 **rock-2a.conf.new**
 
-<sup>
+<sub>
 # Rockchip RK3528 quad core 1-4GB SoC 1xGBe 0-32GB eMMC
 BOARD_NAME="ROCK 2A"
 BOARD_VENDOR="radxa"
@@ -59,12 +59,11 @@ function post_family_config__rock2a_use_mainline_uboot() {
                 flashcp -v -p "$1/u-boot-rockchip-spi.bin" /dev/mtd0
         }
 }
-</sup>
+</sub>
 
 **rockchip64_common.inc.new**
 
-<sup>
-...
+<sub>
         edge)
                 declare -g KERNEL_MAJOR_MINOR="6.19"
                 declare -g LINUXFAMILY=rockchip64
@@ -74,8 +73,7 @@ function post_family_config__rock2a_use_mainline_uboot() {
                 declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
                 declare -g SERIALCON="ttyS0"
                 ;;
-...
-</sup>
+</sub>
 
 
 <p>Eventually new patches to apply (from directory called patches):
