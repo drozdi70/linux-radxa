@@ -4,11 +4,13 @@ Kernel 6.19.6 for testing purpose of rockchip Radxa rock-2a and nanopi zero2 pro
 
 <ins>Steps:</ins>
 
-git clone https://github.com/armbian/build
-cp rockchip64_common.inc.new build/config/sources/families/include/rockchip64_common.inc
-cp rock-2a.conf.new build/config/boards/rock-2a.conf
-cd build
-./compile.sh build BOARD=rock-2a BRANCH=edge BUILD_DESKTOP=no BUILD_MINIMAL=no KERNEL_CONFIGURE=no RELEASE=noble
+
+> git clone https://github.com/armbian/build
+> cp rockchip64_common.inc.new build/config/sources/families/include/rockchip64_common.inc
+> cp rock-2a.conf.new build/config/boards/rock-2a.conf
+> cd build
+> ./compile.sh build BOARD=rock-2a BRANCH=edge BUILD_DESKTOP=no BUILD_MINIMAL=no KERNEL_CONFIGURE=no RELEASE=noble
+
 
 <ins>Config files:</ins>
 
