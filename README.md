@@ -74,9 +74,10 @@ function post_family_config__rock2a_use_mainline_uboot() {
 >                ;;
 
 
-<p>Eventually new patches to apply (from directory called patches):
+Eventually new patches to apply (from directory called patches):
 
->mkdir -p build/userpatches/kernel/archive/rockchip64-6.19/
->mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
->cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
->cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
+
+> mkdir -p build/userpatches/kernel/archive/rockchip64-6.19/
+> mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
+> cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
+> cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
