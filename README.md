@@ -1,8 +1,8 @@
-# linux-radxa
+<b>linux-radxa</b>
 
-kernel 6.19.6 for testing purpose of rockchip Radxa rock-2a and nanopi zero2 projects
+Kernel 6.19.6 for testing purpose of rockchip Radxa rock-2a and nanopi zero2 projects
 
-Steps:
+<p>Steps:
 
 git clone https://github.com/armbian/build
 cp rockchip64_common.inc.new build/config/sources/families/include/rockchip64_common.inc
@@ -10,10 +10,10 @@ cp rock-2a.conf.new build/config/boards/rock-2a.conf
 cd build
 ./compile.sh build BOARD=rock-2a BRANCH=edge BUILD_DESKTOP=no BUILD_MINIMAL=no KERNEL_CONFIGURE=no RELEASE=noble
 
-Config files:
+<p><u>Config files:</u>
 
-rock-2a.conf.new
-
+<b>rock-2a.conf.new</b>
+<quote>
 # Rockchip RK3528 quad core 1-4GB SoC 1xGBe 0-32GB eMMC
 BOARD_NAME="ROCK 2A"
 BOARD_VENDOR="radxa"
@@ -58,73 +58,11 @@ function post_family_config__rock2a_use_mainline_uboot() {
                 flashcp -v -p "$1/u-boot-rockchip-spi.bin" /dev/mtd0
         }
 }
+</quote>
 
-rockchip64_common.inc.new
+<p><b>rockchip64_common.inc.new</b>
 
-
-...
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-
-
-...
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-
-
-...
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-        edge)
-                declare -g KERNEL_MAJOR_MINOR="6.19"
-                declare -g LINUXFAMILY=rockchip64
-                declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
-                declare -g KERNELSOURCE='https://github.com/drozdi70/linux-radxa.git'
-                declare -g KERNELBRANCH='branch:main'
-                declare -g KERNELPATCHDIR='rockchip64-edge-6.19'
-                declare -g SERIALCON="ttyS0"
-                ;;
-
-
+<quote>
 ...
         edge)
                 declare -g KERNEL_MAJOR_MINOR="6.19"
@@ -136,9 +74,10 @@ rockchip64_common.inc.new
                 declare -g SERIALCON="ttyS0"
                 ;;
 ...
+</quote>
 
 
-Eventaully new patches to apply (from directory called patches):
+<p>Eventaully new patches to apply (from directory called patches):
 
 mkdir -p build/userpatches/kernel/archive/rockchip64-6.19/
 mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
