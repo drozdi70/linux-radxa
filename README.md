@@ -86,3 +86,18 @@ mkdir -p build/userpatches/kernel/rockchip64-edge-6.19
 cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
 cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
 ```
+
+**Defconfig**
+
+Please be sur you include all drivers you need in your kernel, for example:
+
+```
+...
+CONFIG_USB_OTG=y
+CONFIG_PHY_ROCKCHIP_PCIE=y
+CONFIG_ROCKCHIP_PHY=y
+CONFIG_USB_DWC3=y
+CONFIG_USB_OHCI_HCD=y
+CONFIG_USB_EHCI_HCD=y
+...
+```
