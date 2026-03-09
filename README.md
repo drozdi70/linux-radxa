@@ -8,6 +8,7 @@ Kernel 6.19.6 for testing purpose of rockchip Radxa Rock-2a and Nanopi Zero2 pro
 git clone https://github.com/armbian/build
 cp rockchip64_common.inc.new build/config/sources/families/include/rockchip64_common.inc
 cp rock-2a.conf.new build/config/boards/rock-2a.conf
+cp defconfig build/config/kernel/linux-rockchip64-edge.config
 cd build
 ./compile.sh build BOARD=rock-2a BRANCH=edge BUILD_DESKTOP=no BUILD_MINIMAL=no KERNEL_CONFIGURE=no RELEASE=noble
 ```
@@ -87,7 +88,7 @@ cp patches/*.patch build/userpatches/kernel/archive/rockchip64-6.19/
 cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
 ```
 
-**Defconfig**
+**Defconfig (linux-rockchip64-edge.config)**
 
 Please be sur you include all drivers you need in your kernel, for example:
 
