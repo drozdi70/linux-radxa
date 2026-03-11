@@ -105,7 +105,7 @@ CONFIG_USB_EHCI_HCD=y
 
 ================================================================
 
-Actual issues:
+**Actual issues:**
 
 1. Power domain
 
