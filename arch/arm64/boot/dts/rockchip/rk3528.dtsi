@@ -790,9 +790,7 @@
 				};
 				power-domain@RK3528_PD_VO {
 					reg = <RK3528_PD_VO>;
-					clocks =  <&cru ACLK_BUS_VOPGL_ROOT>,
-						 <&cru ACLK_VO_L_ROOT>,
-						 <&cru PCLK_VO_IOC>,
+					clocks = <&cru PCLK_VO_IOC>,
 						 <&cru PCLK_VO_GRF>,
 						 <&cru PCLK_CRU>,
 						 <&cru DCLK_VOP0>,
@@ -825,7 +823,6 @@
 						 <&cru PCLK_VPU_IOC>,
 						 <&cru PCLK_PIPE_GRF>,
 						 <&cru PCLK_MAC_VPU>,
-						 <&cru ACLK_VPU_L_ROOT>,
 						 <&cru HCLK_VPU_ROOT>,
 						 <&cru PCLK_CRU_PCIE>,
 						 <&cru ACLK_PCIE>,
