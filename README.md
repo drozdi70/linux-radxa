@@ -102,3 +102,37 @@ CONFIG_USB_OHCI_HCD=y
 CONFIG_USB_EHCI_HCD=y
 ...
 ```
+
+================================================================
+
+Actual issues:
+
+1. Power domain
+
+```
+[    0.038779] rockchip-pm-domain ff600000.power-management:power-controller: power-domain: failed to get clk at index 0: -517
+[    0.038802] rockchip-pm-domain ff600000.power-management:power-controller: failed to handle node power-domain: -517
+[    0.442562] PM: genpd: Disabling unused power domains
+[   23.012367] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ff140000.usb
+[   23.012373] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ff100000.usb
+[   23.012379] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to fe500000.usb
+[   23.012393] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffad0000.tsadc
+[   23.012402] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffbe0000.ethernet
+[   23.012415] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffdf0000.usb2phy
+[   23.012325] platform fe500000.usb: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/otg-port
+[   23.012346] platform fe500000.dwc3: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/otg-port
+[   23.012351] platform ff100000.usb: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/host-port
+```
+
+2. Clock clk_usbphy_480m missing? or issue with phy-rockchip-usb.c/phy-rockchip-inno-usb2.c?
+
+```
+root@rock-2a:~# cat /sys/kernel/debug/clk/clk_summary |grep -i usb
+    clk_ref_usb3otg                  1       1        0        24000000    0          0     50000      Y      usbdrd                          no_connection_id
+    clk_suspend_usb3otg              1       1        0        24000000    0          0     50000      Y      usbdrd                          no_connection_id
+    clk_ref_usbphy                   0       0        0        24000000    0          0     50000      N      deviceless                      no_connection_id
+                aclk_usb3otg         1       1        0        198000000   0          0     50000      Y                  usbdrd                          no_connection_id
+                hclk_usbhost_arb     0       0        0        148500000   0          0     50000      N                  deviceless                      no_connection_id
+                hclk_usbhost         0       1        0        148500000   0          0     50000      N                  power-domain@7                  no_connection_id
+                pclk_usbphy          0       1        0        99600000    0          0     50000      N                  power-domain@7                  no_connection_id
+```
