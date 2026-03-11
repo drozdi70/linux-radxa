@@ -90,7 +90,7 @@ cp patches/*.patch build/userpatches/kernel/rockchip64-edge-6.19/
 
 **Defconfig (linux-rockchip64-edge.config)**
 
-Please be sure you include all needed drivers you in your kernel, for example:
+Please be sure you include all needed drivers in your kernel, for example:
 
 ```
 ...
