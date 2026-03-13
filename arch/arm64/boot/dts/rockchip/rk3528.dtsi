@@ -99,6 +99,65 @@
 		status = "disabled";
 	};
 
+	dmc: dmc {
+		compatible = "rockchip,rk3528-dmc";
+		interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+		interrupt-names = "complete";
+		devfreq-events = <&dfi>;
+		clocks = <&scmi_clk SCMI_CLK_DDR>;
+		clock-names = "dmc_clk";
+		operating-points-v2 = <&dmc_opp_table>;
+		upthreshold = <40>;
+		downdifferential = <20>;
+		auto-min-freq = <324000>;
+		auto-freq-en = <0>;
+		status = "disabled";
+	};
+
+	dmc_opp_table: dmc-opp-table {
+		compatible = "operating-points-v2";
+
+		mbist-vmin = <850000 900000>;
+		nvmem-cells = <&log_leakage>, <&dmc_opp_info>, <&logic_mbist_vmin>;
+		nvmem-cell-names = "leakage", "opp-info", "mbist-vmin";
+
+		rockchip,temp-hysteresis = <5000>;
+		rockchip,low-temp = <10000>;
+		rockchip,low-temp-min-volt = <900000>;
+
+		rockchip,leakage-voltage-sel = <
+			1   10   0
+			11  14   1
+			15  22   2
+			23  28   3
+			29  254  4
+		>;
+
+		opp-920000000 {
+			opp-hz = /bits/ 64 <920000000>;
+			opp-microvolt = <850000 850000 1000000>;
+		};
+		opp-1056000000 {
+			opp-hz = /bits/ 64 <1056000000>;
+			opp-microvolt = <850000 850000 1000000>;
+			opp-microvolt-L0 = <875000 875000 1000000>;
+			opp-microvolt-L1 = <850000 850000 1000000>;
+			opp-microvolt-L2 = <850000 850000 1000000>;
+			opp-microvolt-L3 = <850000 850000 1000000>;
+			opp-microvolt-L4 = <850000 850000 1000000>;
+		};	
+		opp-1184000000 {
+			opp-hz = /bits/ 64 <1184000000>;
+			opp-microvolt = <900000 900000 1000000>;
+			opp-microvolt-L0 = <950000 950000 1000000>;
+			opp-microvolt-L1 = <925000 925000 1000000>;
+			opp-microvolt-L2 = <900000 900000 1000000>;
+			opp-microvolt-L3 = <875000 875000 1000000>;
+			opp-microvolt-L4 = <862500 862500 1000000>;
+			status = "disabled";
+		};
+	};
+
 	firmware {
 		scmi: scmi {
 			compatible = "arm,scmi-smc";
@@ -318,11 +377,11 @@
 		#address-cells = <2>;
 		#size-cells = <2>;
 
-		pcie: pcie@fe000000 {
+		pcie: pcie@fe4f0000 {
 			compatible = "rockchip,rk3528-pcie",
 				     "rockchip,rk3568-pcie";
-			reg = <0x0 0xfe000000 0x0 0x400000>,
-			      <0x0 0xfe4f0000 0x0 0x010000>,
+			reg = <0x0 0xfe4f0000 0x0 0x010000>,
+			      <0x0 0xfe000000 0x0 0x400000>,
 			      <0x0 0xfc000000 0x0 0x100000>;
 			reg-names = "dbi", "apb", "config";
 			bus-range = <0x0 0xff>;
@@ -1150,6 +1209,61 @@
 			power-domains = <&power RK3528_PD_VPU>;
 		};
 
+		vdpp: vdpp@ff861000 {
+			compatible = "rockchip,vdpp-v1";
+			reg = <0x0 0xff861000 0x0 0x100>,  <0x0 0xff862000 0x0 0x900>;
+			reg-names = "vdpp_regs", "zme_regs";
+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru ACLK_VDPP>, <&cru HCLK_VDPP>, <&cru CLK_CORE_VDPP>;
+			clock-names = "aclk", "hclk", "sclk";
+			rockchip,normal-rates = <340000000>, <0>, <340000000>;
+			assigned-clocks = <&cru ACLK_VDPP>, <&cru CLK_CORE_VDPP>;
+			assigned-clock-rates = <340000000>, <340000000>;
+			resets = <&cru SRST_ARESETN_VDPP>, <&cru SRST_HRESETN_VDPP>,
+				<&cru SRST_RESETN_CORE_VDPP>;
+			reset-names = "shared_rst_a", "shared_rst_h", "shared_rst_s";
+			rockchip,srv = <&mpp_srv>;
+			rockchip,grf = <&grf>;
+			rockchip,grf-mem-offset = <0x600e0>;
+			rockchip,grf-mem-values = <0xf0040000>, <0xf004f004>;
+			rockchip,taskqueue-node = <3>;
+			rockchip,resetgroup-node = <3>;
+			rockchip,disable-auto-freq;
+			iommus = <&iep_mmu>;
+			status = "disabled";
+		};
+
+		jpegd: jpegd@ff870000 {
+			compatible = "rockchip,rkv-jpeg-decoder-v1";
+			reg = <0x0 0xff870000 0x0 0x400>;
+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru ACLK_JPEG_DECODER>, <&cru HCLK_JPEG_DECODER>;
+			clock-names = "aclk_vcodec", "hclk_vcodec";
+			rockchip,normal-rates = <340000000>, <0>;
+			assigned-clocks = <&cru ACLK_JPEG_DECODER>;
+			assigned-clock-rates = <340000000>;
+			rockchip,disable-auto-freq;
+			resets = <&cru SRST_ARESETN_JPEG_DECODER>, <&cru SRST_HRESETN_JPEG_DECODER>;
+			reset-names = "video_a", "video_h";
+			iommus = <&jpegd_mmu>;
+			rockchip,srv = <&mpp_srv>;
+			rockchip,taskqueue-node = <4>;
+			rockchip,resetgroup-node = <4>;
+			status = "disabled";
+		};
+
+		jpegd_mmu: iommu@ff870480 {
+			compatible = "rockchip,iommu-v2";
+			reg = <0x0 0xff870480 0x0 0x40>;
+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "jpegd_mmu";
+			clock-names = "aclk", "iface";
+			clocks = <&cru ACLK_JPEG_DECODER>, <&cru HCLK_JPEG_DECODER>;
+			#iommu-cells = <0>;
+			rockchip,shootdown-entire;
+			status = "disabled";
+		};
+
 		tve: tve@ff880000 {
 			compatible = "rockchip,rk3528-tve";
 			reg = <0x0 0xff880000 0x0 0x4000>,
@@ -1195,6 +1309,37 @@
 			};
 		};
 
+		iep: iep@ff860000 {
+			compatible = "rockchip,iep-v2";
+			reg = <0x0 0xff860000 0x0 0x500>;
+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru ACLK_VDPP>, <&cru HCLK_VDPP>, <&cru CLK_CORE_VDPP>;
+			clock-names = "aclk", "hclk", "sclk";
+			rockchip,normal-rates = <340000000>, <0>, <340000000>;
+			assigned-clocks = <&cru ACLK_VDPP>, <&cru CLK_CORE_VDPP>;
+			assigned-clock-rates = <340000000>, <340000000>;
+			resets = <&cru SRST_ARESETN_VDPP>, <&cru SRST_HRESETN_VDPP>,
+				<&cru SRST_RESETN_CORE_VDPP>;
+			reset-names = "shared_rst_a", "shared_rst_h", "shared_rst_s";
+			rockchip,srv = <&mpp_srv>;
+			rockchip,taskqueue-node = <3>;
+			rockchip,resetgroup-node = <3>;
+			iommus = <&iep_mmu>;
+			status = "disabled";
+		};
+
+		iep_mmu: iommu@ff860800 {
+			compatible = "rockchip,iommu-v2";
+			reg = <0x0 0xff860800 0x0 0x100>;
+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "iep_mmu";
+			clocks = <&cru ACLK_VDPP>, <&cru HCLK_VDPP>;
+			clock-names = "aclk", "iface";
+			#iommu-cells = <0>;
+			rockchip,shootdown-entire;
+			status = "disabled";
+		};
+
 		hdmi: hdmi@ff8d0000 {
 			compatible = "rockchip,rk3528-dw-hdmi";
 			reg = <0x0 0xff8d0000 0x0 0x20000>,
@@ -1235,6 +1380,13 @@
 					};
 				};
 			};
+		};
+
+		dfi: dfi@ff930000 {
+			reg = <0x0 0xff930000 0x0 0x400>;
+			compatible = "rockchip,rk3528-dfi";
+			rockchip,grf = <&grf>;
+			status = "disabled";
 		};
 
 		spi0: spi@ff9c0000 {
@@ -1858,6 +2010,15 @@
 				gpu_mbist_vmin: gpu-mbist-vmin@9 {
 					reg = <0x09 0x1>;
 					bits = <3 2>;
+				};
+
+				logic_mbist_vmin: logic-mbist-vmin@9 {
+					reg = <0x09 0x1>;
+					bits = <5 2>;
+				};
+
+				dmc_opp_info: dmc-opp-info@3e {
+					reg = <0x3e 0x6>;
 				};
 
 				logic_leakage: logic-leakage@1b {

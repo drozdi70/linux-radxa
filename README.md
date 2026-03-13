@@ -136,3 +136,5 @@ root@rock-2a:~# cat /sys/kernel/debug/clk/clk_summary |grep -i usb
                 hclk_usbhost         0       1        0        148500000   0          0     50000      N                  power-domain@7                  no_connection_id
                 pclk_usbphy          0       1        0        99600000    0          0     50000      N                  power-domain@7                  no_connection_id
 ```
+
+3. DMC Rockchip DEVFREQ
