@@ -764,7 +764,11 @@
 				<&cru ACLK_BUS_VOPGL_ROOT>,
 				<&cru ACLK_VO_ROOT>,
 				<&cru ACLK_VPU_ROOT>,
-				<&cru ACLK_VPU_L_ROOT>;
+				<&cru ACLK_VPU_L_ROOT>,
+				<&cru ACLK_GPU_ROOT>,
+				<&cru PCLK_GPU_ROOT>,
+				<&cru CLK_CORE_RKVENC>,
+				<&cru CLK_HEVC_CA_RKVDEC>;
 
 			assigned-clock-rates =
 				<32768>, <1188000000>,
@@ -785,7 +789,11 @@
 				<500000000>,
 				<340000000>,
 				<300000000>,
-				<200000000>;
+				<200000000>,
+				<300000000>,
+				<100000000>,
+				<300000000>,
+				<600000000>;
 			#clock-cells = <1>;
 			#reset-cells = <1>;
 		};
@@ -805,35 +813,39 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				status = "okay";
-
-				/* These power domains are grouped by VD_GPU */
 				power-domain@RK3528_PD_GPU {
 					reg = <RK3528_PD_GPU>;
 					clocks = <&cru ACLK_GPU_MALI>,
-						 <&cru PCLK_GPU_ROOT>;
+						 <&cru ACLK_GPU>;
 					pm_qos = <&qos_gpu_m0>,
 						 <&qos_gpu_m1>;
 					#power-domain-cells = <0>;
 				};
-
-				/* These power domains are grouped by VD_LOGIC */
 				power-domain@RK3528_PD_RKVDEC {
 					reg = <RK3528_PD_RKVDEC>;
-					clocks = <&cru CLK_CORE_RKVENC>,
-						 <&cru ACLK_RKVENC_ROOT>,
-						 <&cru HCLK_RKVENC_ROOT>,
-						 <&cru PCLK_RKVENC_ROOT>,
-						 <&cru PCLK_RKVENC_GRF>,
-						 <&cru PCLK_RKVENC_IOC>,
-						 <&cru ACLK_RKVENC>,
-						 <&cru HCLK_RKVENC>,
-						 <&cru PCLK_GPIO4>;
+					clocks = <&cru ACLK_RKVDEC>,
+						<&cru HCLK_RKVDEC>,
+						<&cru HCLK_RKVDEC_ROOT>,
+						<&cru ACLK_RKVDEC_ROOT_NDFT>,
+						<&cru PCLK_DDRPHY_CRU>,
+						<&cru ACLK_RKVDEC_PVTMUX_ROOT>;
 					pm_qos = <&qos_rkvdec>;
 					#power-domain-cells = <0>;
 					status = "disabled";
 				};
 				power-domain@RK3528_PD_RKVENC {
 					reg = <RK3528_PD_RKVENC>;
+					clocks = <&cru ACLK_RKVENC_ROOT>,
+						<&cru HCLK_RKVENC_ROOT>,
+						<&cru PCLK_RKVENC_ROOT>,
+						<&cru PCLK_RKVENC_GRF>,
+						<&cru PCLK_RKVENC_IOC>,
+						<&cru ACLK_RKVENC>,
+						<&cru HCLK_RKVENC>,
+						<&cru CLK_I2C1>,
+						<&cru PCLK_I2C1>,
+						<&cru DBCLK_GPIO4>,
+						<&cru PCLK_GPIO4>;
 					pm_qos = <&qos_rkvenc>;
 					#power-domain-cells = <0>;
 					status = "okay";
@@ -851,6 +863,8 @@
 						 <&cru ACLK_VO_ROOT>,
 						 <&cru HCLK_VOP>,
 						 <&cru ACLK_VOP>,
+						 <&cru PCLK_GPIO2>,
+						 <&cru DBCLK_GPIO2>,
 						 <&cru HCLK_VO_ROOT>,
 						 <&cru PCLK_USBPHY>,
 						 <&cru HCLK_USBHOST>;
@@ -880,7 +894,13 @@
 						 <&cru PCLK_PCIE>,
 						 <&cru CLK_PCIE_AUX>,
 						 <&cru HCLK_PCIE_SLV>,
-						 <&cru HCLK_PCIE_DBI>;
+						 <&cru HCLK_PCIE_DBI>,
+						 <&cru PCLK_SARADC>,
+						 <&cru CLK_SARADC>,
+						 <&cru PCLK_GPIO1>,
+						 <&cru DBCLK_GPIO1>,
+						 <&cru DBCLK_GPIO3>,
+						 <&cru PCLK_GPIO3>;
 					pm_qos = <&qos_emmc>,
 						 <&qos_fspi>,
 						 <&qos_gmac1>,
@@ -899,11 +919,10 @@
 		gpu: gpu@ff700000 {
 			compatible = "rockchip,rk3528-mali", "arm,mali-450";
 			reg = <0x0 0xff700000 0x0 0x40000>;
-			assigned-clocks = <&cru ACLK_GPU_MALI>,
-					  <&scmi_clk SCMI_CLK_GPU>;
-			assigned-clock-rates = <297000000>, <300000000>;
-			clocks = <&cru ACLK_GPU_MALI>, <&scmi_clk SCMI_CLK_GPU>;
+			clocks = <&cru ACLK_GPU_MALI>, <&cru ACLK_GPU>;
 			clock-names = "bus", "core";
+			assigned-clocks = <&scmi_clk SCMI_CLK_GPU>;
+			assigned-clock-rates = <300000000>;
 			#cooling-cells = <2>;
 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
 				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
@@ -922,6 +941,7 @@
 			operating-points-v2 = <&gpu_opp_table>;
 			power-domains = <&power RK3528_PD_GPU>;
 			resets = <&cru SRST_A_GPU>;
+			rockchip,grf = <&grf>;
 			status = "disabled";
 
 			gpu_power_model: power-model {
@@ -1307,6 +1327,31 @@
 					};
 				};
 			};
+		};
+
+		rga2: rga@ff850000 {
+			compatible = "rockchip,rga2_core0";
+			reg = <0x0 0xff850000 0x0 0x1000>;
+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "rga2_irq";
+			clocks = <&cru ACLK_RGA2E>, <&cru HCLK_RGA2E>, <&cru CLK_CORE_RGA2E>;
+			clock-names = "aclk_rga2", "hclk_rga2", "clk_rga2";
+			iommus = <&rga2_mmu>;
+			rockchip,grf = <&grf>;
+			rockchip,grf-offset = <0x600e0>;
+			rockchip,grf-values = <0x0ff10000>, <0x0ff10ff1>;
+			status = "disabled";
+		};
+
+		rga2_mmu: iommu@ff850f00 {
+			compatible = "rockchip,iommu-v2";
+			reg = <0x0 0xff850f00 0x0 0x100>;
+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "rga2_mmu";
+			clocks = <&cru ACLK_RGA2E>, <&cru HCLK_RGA2E>;
+			clock-names = "aclk", "iface";
+			#iommu-cells = <0>;
+			status = "disabled";
 		};
 
 		iep: iep@ff860000 {

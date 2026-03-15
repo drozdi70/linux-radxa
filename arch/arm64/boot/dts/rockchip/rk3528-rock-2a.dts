@@ -461,6 +461,15 @@
 	status = "okay";
 };
 
+&rga2 {
+	status = "okay";
+};
+
+&rga2_mmu {
+	status = "okay";
+};
+
+
 &rkvdec {
 	status = "okay";
 };
