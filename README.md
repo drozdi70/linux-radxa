@@ -110,31 +110,96 @@ CONFIG_USB_EHCI_HCD=y
 1. Power domain
 
 ```
-[    0.038779] rockchip-pm-domain ff600000.power-management:power-controller: power-domain: failed to get clk at index 0: -517
-[    0.038802] rockchip-pm-domain ff600000.power-management:power-controller: failed to handle node power-domain: -517
-[    0.442562] PM: genpd: Disabling unused power domains
-[   23.012367] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ff140000.usb
-[   23.012373] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ff100000.usb
-[   23.012379] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to fe500000.usb
-[   23.012393] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffad0000.tsadc
-[   23.012402] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffbe0000.ethernet
-[   23.012415] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffdf0000.usb2phy
-[   23.012325] platform fe500000.usb: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/otg-port
-[   23.012346] platform fe500000.dwc3: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/otg-port
-[   23.012351] platform ff100000.usb: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/host-port
+root@rock-2a:~# dmesg |grep -i power
+[    0.031158] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.070307] rockchip-pm-domain ff600000.power-management:power-controller: power-domain: failed to get clk at index 0: -517
+[    0.070328] rockchip-pm-domain ff600000.power-management:power-controller: failed to handle node power-domain: -517
+[    0.975548] PM: genpd: Disabling unused power domains
+[   12.522908] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to fe500000.usb
+[   12.522915] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to fe4f0000.pcie
+[   12.522922] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ff700000.gpu
+[   12.522931] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ff7c0000.video-codec
+[   12.522948] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffad0000.tsadc
+[   12.522965] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffdf0000.usb2phy
+
+domain                          status          children        performance
+    /device                         runtime status                  managed by
+------------------------------------------------------------------------------
+vpu                             on                              0
+    ffdc0000.phy                    unsupported                 0           SW
+    ff7c0800.iommu                  suspended                   0           SW
+    ffaf0000.gpio                   unsupported                 0           SW
+    ffb10000.gpio                   unsupported                 0           SW
+    ffbf0000.mmc                    suspended                   0           SW
+    ffae0000.adc                    unsupported                 0           SW
+    ffbe0000.ethernet               active                      0           SW
+    ff7c0000.video-codec            suspended                   0           SW
+vo                              on                              0
+    ffb00000.gpio                   unsupported                 0           SW
+    ffc30000.mmc                    suspended                   0           SW
+venc                            on                              0
+    ffa58000.i2c                    unsupported                 0           SW
+    ffb20000.gpio                   unsupported                 0           SW
+gpu                             off-0                           0
+    ff700000.gpu                    suspended                   0           SW
+
 ```
 
 2. Clock clk_usbphy_480m missing? or issue with phy-rockchip-usb.c/phy-rockchip-inno-usb2.c?
 
 ```
-root@rock-2a:~# cat /sys/kernel/debug/clk/clk_summary |grep -i usb
-    clk_ref_usb3otg                  1       1        0        24000000    0          0     50000      Y      usbdrd                          no_connection_id
-    clk_suspend_usb3otg              1       1        0        24000000    0          0     50000      Y      usbdrd                          no_connection_id
-    clk_ref_usbphy                   0       0        0        24000000    0          0     50000      N      deviceless                      no_connection_id
-                aclk_usb3otg         1       1        0        198000000   0          0     50000      Y                  usbdrd                          no_connection_id
-                hclk_usbhost_arb     0       0        0        148500000   0          0     50000      N                  deviceless                      no_connection_id
+root@rock-2a:~# dmesg |grep -i usb
+[    0.109508] usbcore: registered new interface driver usbfs
+[    0.109542] usbcore: registered new interface driver hub
+[    0.109582] usbcore: registered new device driver usb
+[    0.385484] usbcore: registered new interface driver cdc_acm
+[    0.385502] cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters
+[    0.385788] usbcore: registered new interface driver uas
+[    0.385848] usbcore: registered new interface driver usb-storage
+[    0.443550] usbcore: registered new interface driver usbhid
+[    0.443567] usbhid: USB HID core driver
+[   12.522855] platform fe500000.usb: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/otg-port
+[   12.522879] platform ff140000.usb: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/host-port
+[   12.522886] platform fe500000.dwc3: deferred probe pending: platform: wait for supplier /soc/usb2phy@ffdf0000/otg-port
+[   12.522908] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to fe500000.usb
+[   12.522965] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to ffdf0000.usb2phy
+
+
+
+    clk_ref_usb3otg                  1       2        0        24000000    0          0     50000      Y      power-domain@8                  no_connection_id
+                                                                                                              usbdrd                          no_connection_id
+    clk_suspend_usb3otg              1       2        0        24000000    0          0     50000      Y      power-domain@8                  no_connection_id
+                                                                                                              usbdrd                          no_connection_id
+    clk_ref_usbphy                   0       1        0        24000000    0          0     50000      N      power-domain@7                  no_connection_id
+                aclk_usb3otg         1       2        0        198000000   0          0     50000      Y                  power-domain@8                  no_connection_id
+                                                                                                                          usbdrd                          no_connection_id
+                hclk_usbhost_arb     0       1        0        148500000   0          0     50000      N                  power-domain@7                  no_connection_id
                 hclk_usbhost         0       1        0        148500000   0          0     50000      N                  power-domain@7                  no_connection_id
                 pclk_usbphy          0       1        0        99600000    0          0     50000      N                  power-domain@7                  no_connection_id
 ```
 
-3. DMC Rockchip DEVFREQ -> of_property_for_each_u32 (include/linux/of.h)
+3. PCIE issues:
+
+```
+root@rock-2a:~# dmesg |grep -i pci
+[    0.047876] /soc/pcie@fe4f0000: Fixed dependency cycle(s) with /soc/pcie@fe4f0000/legacy-interrupt-controller
+[    0.128113] PCI: CLS 0 bytes, default 64
+[    0.599952] dw-pcie fe4f0000.pcie: host bridge /soc/pcie@fe4f0000 ranges:
+[    0.599999] dw-pcie fe4f0000.pcie:       IO 0x00fc100000..0x00fc1fffff -> 0x00fc100000
+[    0.600019] dw-pcie fe4f0000.pcie:      MEM 0x00fc200000..0x00fdffffff -> 0x00fc200000
+[    0.600030] dw-pcie fe4f0000.pcie:      MEM 0x0100000000..0x013fffffff -> 0x0100000000
+[    0.600144] dw-pcie fe4f0000.pcie: invalid resource
+[    0.600153] dw-pcie fe4f0000.pcie: Failed to initialize host
+[    0.600158] dw-pcie fe4f0000.pcie: probe with driver dw-pcie failed with error -22
+[   12.522915] rockchip-pm-domain ff600000.power-management:power-controller: sync_state() pending due to fe4f0000.pcie
+
+    clk_pcie_aux                     0       1        0        24000000    0          0     50000      N      power-domain@8                  no_connection_id
+          clk_ref_pcie_100m_phy      0       0        0        24000000    0          0     50000      Y            deviceless                      no_connection_id
+          clk_ref_pcie_inner_phy     0       1        0        24000000    0          0     50000      Y            phy@ffdc0000                    no_connection_id
+                hclk_pcie_dbi        0       1        0        198000000   0          0     50000      N                  power-domain@8                  no_connection_id
+                hclk_pcie_slv        0       1        0        198000000   0          0     50000      N                  power-domain@8                  no_connection_id
+                aclk_pcie            0       1        0        198000000   0          0     50000      N                  power-domain@8                  no_connection_id
+                pclk_pcie_phy        0       2        0        99600000    0          0     50000      N                  phy@ffdc0000                    no_connection_id
+                pclk_pcie            0       1        0        99600000    0          0     50000      N                  power-domain@8                  no_connection_id
+                pclk_cru_pcie        1       2        0        99600000    0          0     50000      Y                  power-domain@8                  no_connection_id
+```
