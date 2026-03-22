@@ -192,6 +192,10 @@
 	};
 };
 
+&rng {
+        status = "okay";
+};
+
 &cpu0 {
 	cpu-supply = <&vdd_arm>;
 };
@@ -217,7 +221,20 @@
 	pinctrl-0 = <&pciem1_pins>;
 	reset-gpios = <&gpio1 RK_PA2 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc_3v3>;
+	resets = <&cru SRST_RESETN_PCIE_POWER_UP>, <&cru SRST_PRESETN_PCIE>;
+	reset-names = "pcie", "periph";
+	rockchip,skip-scan-in-resume;
 	status = "okay";
+};
+
+&pciem1_pins {
+	rockchip,pins =
+		/* pcie_clkreqn_m1 */
+		<1 RK_PA0 4 &pcfg_pull_none>,
+		/* pcie_waken_m1 */
+		<1 RK_PA1 4 &pcfg_pull_none>,
+		/* pcie_reset_gpio */
+		<1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
 };
 
 &gmac1 {
@@ -235,6 +252,12 @@
 	mali-supply = <&vdd_logic>;
 	status = "okay";
 };
+
+&gpu_bus {
+	bus-supply = <&vdd_logic>;
+	status = "okay";
+};
+
 
 &i2c1 {
 	pinctrl-names = "default";
@@ -303,6 +326,10 @@
 			rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
+};
+
+&pwm0 {
+        status = "okay";
 };
 
 &pwm1 {
@@ -381,3 +408,142 @@
 	status = "okay";
 };
 
+&iep {
+	status = "disabled";
+};
+
+&iep_mmu {
+	status = "disabled";
+};
+
+&jpegd {
+	status = "okay";
+};
+
+&jpegd_mmu {
+	status = "okay";
+};
+
+&rga2 {
+	status = "okay";
+};
+
+&rga2_mmu {
+	status = "okay";
+};
+
+&rkvdec {
+	status = "okay";
+};
+
+&rkvdec_mmu {
+	status = "okay";
+};
+
+&rkvenc {
+	status = "okay";
+};
+
+&rkvenc_mmu {
+	status = "okay";
+};
+
+&vdpp {
+	status = "okay";
+};
+
+&vop {
+	/delete-property/ assigned-clocks;
+	/delete-property/ assigned-clock-parents;
+	status = "okay";
+};
+
+&vop_mmu {
+	status = "okay";
+};
+
+&vp0_out_hdmi {
+	remote-endpoint = <&vcon_in_vp0>;
+};
+
+&usbdrd_dwc3 {
+	dr_mode = "otg";
+	extcon = <&usb2phy>;
+	maximum-speed = "high-speed";
+	snps,dis_u2_susphy_quirk;
+	snps,usb2-lpm-disable;
+	status = "okay";
+};
+
+&usbdrd30 {
+	status = "okay";
+};
+
+&tve {
+	status = "disabled";
+};
+
+&tve_in_vp1 {
+	status = "disabled";
+};
+
+&dfi {
+	status = "okay";
+};
+
+&dmc {
+	center-supply = <&vdd_logic>;
+	status = "okay";
+};
+
+&mpp_srv {
+	status = "okay";
+};
+
+&tsadc {
+	status = "okay";
+};
+
+&rmii0_phy {
+	/delete-property/ pinctrl-names;
+	/delete-property/ pinctrl-0;
+};
+
+&sai0 {
+	pinctrl-0 = <&i2s0m0_lrck &i2s0m0_sclk &i2s0m0_sdi &i2s0m0_sdo>;
+	status = "disabled";
+};
+
+&sai2 {
+	status = "okay";
+};
+
+&sai3 {
+	status = "okay";
+};
+
+&display_subsystem {
+	memory-region = <&drm_logo>, <&drm_cubic_lut>;
+	memory-region-names = "drm-logo", "drm-cubic-lut";
+	/* devfreq = <&dmc>; */
+	status = "okay";
+
+	route {
+		route_hdmi: route-hdmi {
+			status = "disabled";
+			logo,uboot = "logo.bmp";
+			logo,kernel = "logo_kernel.bmp";
+			logo,mode = "center";
+			charge_logo,mode = "center";
+			connect = <&vp0_out_hdmi>;
+		};
+		route_tve: route-tve {
+			status = "disabled";
+			logo,uboot = "logo.bmp";
+			logo,kernel = "logo_kernel.bmp";
+			logo,mode = "center";
+			charge_logo,mode = "center";
+			connect = <&vp1_out_tve>;
+		};
+	};
+};

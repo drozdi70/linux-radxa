@@ -93,8 +93,49 @@
 		};
 	};
 
+	vconn {
+		compatible = "rockchip,virtual-connector";
+		hdmi0-enable;
+		hdmi0-disconnected;
+		hdmi0-vp-id = <0>;
+		status = "okay";
+
+		/* 16 - 1920x1080@60Hz 16:9 */
+		hdmi0_timing {
+			clock-frequency = <148500000>;
+			hactive = <1920>;
+			vactive = <1080>;
+			hfront-porch = <88>;
+			hsync-len = <44>;
+			hback-porch = <148>;
+			vfront-porch = <4>;
+			vsync-len = <5>;
+			vback-porch = <36>;
+			hsync-active = <1>;
+			vsync-active = <1>;
+			de-active = <0>;
+			pixelclk-active = <0>;
+		};
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				vcon_in_vp0: endpoint@0 {
+					reg = <0>;
+					remote-endpoint = <&vp0_out_hdmi>;
+				};
+			};
+		};
+	};
+
 	display_subsystem: display-subsystem {
- 		compatible = "rockchip,display-subsystem";
+		compatible = "rockchip,display-subsystem";
 		ports = <&vop_out>;
 		status = "disabled";
 	};
@@ -297,6 +338,16 @@
 		#size-cells = <2>;
 		ranges;
 
+		drm_logo: drm-logo@0 {
+			compatible = "rockchip,drm-logo";
+			reg = <0x0 0x0 0x0 0x0>;
+		};
+
+		drm_cubic_lut: drm-cubic-lut@0 {
+			compatible = "rockchip,drm-cubic-lut";
+			reg = <0x0 0x0 0x0 0x0>;
+		};
+
 		scmi_shmem: shmem@10f000 {
 			compatible = "arm,scmi-shmem";
 			reg = <0x0 0x0010f000 0x0 0x100>;
@@ -362,6 +413,40 @@
 		clock-frequency = <24000000>;
 		clock-output-names = "xin24m";
 		#clock-cells = <0>;
+	};
+
+	mclkin_sai0: mclkin-sai0 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <0>;
+		clock-output-names = "i2s0_mclkin";
+	};
+
+	mclkin_sai1: mclkin-sai1 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <0>;
+		clock-output-names = "i2s1_mclkin";
+	};
+
+	mclkout_sai0: mclkout-sai0@ff340014 {
+		compatible = "rockchip,clk-out";
+		reg = <0 0xff340014 0 0x4>;
+		clocks = <&cru MCLK_SAI_I2S0>;
+		#clock-cells = <0>;
+		clock-output-names = "mclk_sai0_to_io";
+		rockchip,bit-shift = <1>;
+		rockchip,bit-set-to-disable;
+	};
+
+	mclkout_sai1: mclkout-sai1@ff320004 {
+		compatible = "rockchip,clk-out";
+		reg = <0 0xff320004 0 0x4>;
+		clocks = <&cru MCLK_SAI_I2S1>;
+		#clock-cells = <0>;
+		clock-output-names = "mclk_sai1_to_io";
+		rockchip,bit-shift = <14>;
+		rockchip,bit-set-to-disable;
 	};
 
 	gmac0_clk: clock-gmac50m {
@@ -1816,6 +1901,81 @@
 			resets = <&cru SRST_P_SARADC>;
 			reset-names = "saradc-apb";
 			#io-channel-cells = <1>;
+			status = "disabled";
+		};
+
+		sai3: sai@ffb70000 {
+			compatible = "rockchip,rk3528-sai", "rockchip,sai-v1";
+			reg = <0x0 0xffb70000 0x0 0x1000>;
+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru MCLK_SAI_I2S3>, <&cru HCLK_SAI_I2S3>;
+			clock-names = "mclk", "hclk";
+			assigned-clocks = <&cru MCLK_SAI_I2S3>;
+			assigned-clock-rates = <6144000>;
+			dmas = <&dmac 5>;
+			dma-names = "tx";
+			resets = <&cru SRST_MRESETN_SAI_I2S3>, <&cru SRST_HRESETN_SAI_I2S3>;
+			reset-names = "m", "h";
+			rockchip,always-on;
+			#sound-dai-cells = <0>;
+			status = "disabled";
+		};
+
+		sai0: sai@ffb80000 {
+			compatible = "rockchip,rk3528-sai", "rockchip,sai-v1";
+			reg = <0x0 0xffb80000 0x0 0x1000>;
+			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru MCLK_SAI_I2S0>, <&cru HCLK_SAI_I2S0>;
+			clock-names = "mclk", "hclk";
+			dmas = <&dmac 1>, <&dmac 0>;
+			dma-names = "tx", "rx";
+			resets = <&cru SRST_MRESETN_SAI_I2S0>, <&cru SRST_HRESETN_SAI_I2S0>;
+			reset-names = "m", "h";
+			pinctrl-names = "default";
+			pinctrl-0 = <&i2s0m0_lrck
+				&i2s0m0_sclk
+				&i2s0m0_sdi
+				&i2s0m0_sdo>;
+			#sound-dai-cells = <0>;
+			status = "disabled";
+		};
+
+		sai2: sai@ffb90000 {
+			compatible = "rockchip,rk3528-sai", "rockchip,sai-v1";
+			reg = <0x0 0xffb90000 0x0 0x1000>;
+			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru MCLK_SAI_I2S2>, <&cru HCLK_SAI_I2S2>;
+			clock-names = "mclk", "hclk";
+			dmas = <&dmac 4>;
+			dma-names = "tx";
+			resets = <&cru SRST_MRESETN_SAI_I2S2>, <&cru SRST_HRESETN_SAI_I2S2>;
+			reset-names = "m", "h";
+			#sound-dai-cells = <0>;
+			status = "disabled";
+		};
+
+		sai1: sai@ffba0000 {
+			compatible = "rockchip,rk3528-sai", "rockchip,sai-v1";
+			reg = <0x0 0xffba0000 0x0 0x1000>;
+			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&cru MCLK_SAI_I2S1>, <&cru HCLK_SAI_I2S1>;
+			clock-names = "mclk", "hclk";
+			dmas = <&dmac 3>, <&dmac 2>;
+			dma-names = "tx", "rx";
+			resets = <&cru SRST_MRESETN_SAI_I2S1>, <&cru SRST_HRESETN_SAI_I2S1>;
+			reset-names = "m", "h";
+			pinctrl-names = "default";
+			pinctrl-0 = <&i2s1_sclk
+				&i2s1_lrck
+				&i2s1_sdi0
+				&i2s1_sdi1
+				&i2s1_sdi2
+				&i2s1_sdi3
+				&i2s1_sdo0
+				&i2s1_sdo1
+				&i2s1_sdo2
+				&i2s1_sdo3>;
+			#sound-dai-cells = <0>;
 			status = "disabled";
 		};
 
