@@ -126,10 +126,11 @@ domain                          status          children        performance
 vpu                             on                              0
     ffdc0000.phy                    unsupported                 0           SW
     ff7c0800.iommu                  suspended                   0           SW
+    ff610000.gpio                   unsupported                 0           SW
     ffaf0000.gpio                   unsupported                 0           SW
     ffb10000.gpio                   unsupported                 0           SW
-    ffbf0000.mmc                    suspended                   0           SW
     ffae0000.adc                    unsupported                 0           SW
+    ffbf0000.mmc                    suspended                   0           SW
     ffbe0000.ethernet               active                      0           SW
     ff7c0000.video-codec            suspended                   0           SW
 vo                              on                              0
@@ -139,7 +140,6 @@ venc                            on                              0
     ffa58000.i2c                    unsupported                 0           SW
     ffb20000.gpio                   unsupported                 0           SW
 gpu                             off-0                           0
-    ff700000.gpu                    suspended                   0           SW
 
 ```
 
